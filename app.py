@@ -1,7 +1,10 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from datetime import date
 from resume import ed_experiences, w_experiences
 from project_details import *
+from joblib import load
+from sklearn.preprocessing import LabelEncoder
+import numpy as np
 
 app = Flask(__name__)
 
@@ -70,8 +73,22 @@ def calculateAge(birthDate):
     return age
 
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def home():
+    if request.method == 'POST':
+        s = request.form["testo"]
+
+        lbl_enc = LabelEncoder()
+        lbl_enc.classes_ = np.load('classes.npy', allow_pickle=True)
+        tfv = load('tfv.joblib')
+        clf2 = load('logreg.joblib')
+
+        s_tfv = tfv.transform([s])
+
+        prediction = lbl_enc.inverse_transform(clf2.predict(s_tfv))
+    else:
+        prediction = ""
+
     return render_template(
         "index.html",
         title=title,
@@ -86,7 +103,8 @@ def home():
         comp_skills=comp_skills,
         ed_experiences=ed_experiences,
         w_experiences=w_experiences,
-        projects=projects
+        projects=projects,
+        prediction=prediction
     )
 
 

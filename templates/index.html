@@ -58,11 +58,17 @@
 
         <div class="section-title">
           <h2>Skills</h2>
+          <h2>{{prediction}}</h2>
         </div>
 
         <div class="row skills-content">
 
           <div class="col-lg-6" data-aos="fade-up">
+            <form action="/#skills" method="post">
+                <label for="testo">Your name: </label>
+                <input id="testo" type="text" name="testo" value="{{ current_name }}">
+                <input type="submit" value="OK">
+            </form>
             
             {% for s in lang_skills %}
             <div class="progress">
